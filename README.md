@@ -1,3 +1,6 @@
 # DistanceSensorAssembly
 
-For ATMega 328p
+##Parts:
+- ATmega328P XPLAINED mini
+- Grove Base Shield
+- Grove Ultrasonic Ranger 
