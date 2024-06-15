@@ -1,0 +1,39 @@
+<ASSEMBLER_INFO>
+ <VERSION>2.2.8</VERSION>
+ <DEVICE>"ATmega328P"</DEVICE>
+ <WORKING_DIR>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\Debug</WORKING_DIR>
+ <INCLUDE_PATH>
+  <DIR>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc</DIR>
+  <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
+  <DIR></DIR>
+ </INCLUDE_PATH>
+ <SOURCE_FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm</SOURCE_FILE>
+ <INCLUDED_FILES>
+  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc</FILE>
+  <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328pdef.inc</FILE>
+ </INCLUDED_FILES>
+ <OBJECT_FILES>
+  <FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\Debug\Abstandshalter.obj</FILE>
+ </OBJECT_FILES>
+ <HEX_FILES>
+  <FILE>Abstandshalter.hex</FILE>
+ </HEX_FILES>
+ <OUTPUT_FILES>
+  <FILE>Abstandshalter.map</FILE>
+  <FILE>Abstandshalter.lss</FILE>
+ </OUTPUT_FILES>
+ <LABELS>
+  <HC_SR04_sensor><FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm</FILE><LINE>66</LINE></HC_SR04_sensor>
+  <agn><FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm</FILE><LINE>71</LINE></agn>
+  <delay_timer0><FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm</FILE><LINE>109</LINE></delay_timer0>
+  <echo_PW><FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm</FILE><LINE>82</LINE></echo_PW>
+  <delay_ms><FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm</FILE><LINE>129</LINE></delay_ms>
+  <l1><FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm</FILE><LINE>89</LINE></l1>
+  <l2><FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm</FILE><LINE>99</LINE></l2>
+  <l0><FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm</FILE><LINE>118</LINE></l0>
+  <l6><FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm</FILE><LINE>132</LINE></l6>
+  <l7><FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm</FILE><LINE>133</LINE></l7>
+  <l8><FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm</FILE><LINE>134</LINE></l8>
+  <hello_string><FILE>C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm</FILE><LINE>143</LINE></hello_string>
+ </LABELS>
+</ASSEMBLER_INFO>
