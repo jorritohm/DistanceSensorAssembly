@@ -1,10 +1,10 @@
 
-AVRASM ver. 2.2.8  C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm Thu Jun 13 11:13:55 2024
+AVRASM ver. 2.2.8  C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Projekt_Repo\DistanceSensorAssembly\Abstandshalter\main.asm Thu Jun 20 10:46:09 2024
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
-C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm(13): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328pdef.inc'
+C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Projekt_Repo\DistanceSensorAssembly\Abstandshalter\main.asm(13): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328pdef.inc'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
-C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm(13): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328pdef.inc'
+C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Projekt_Repo\DistanceSensorAssembly\Abstandshalter\main.asm(13): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328pdef.inc'
                                  
                                  ;
                                  
@@ -1043,75 +1043,30 @@ C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Absta
                                  
                                  ; ***** END OF FILE ******************************************************
                                  
-                                 .equ BAUD = 9600
-                                 .equ F_CPU = 16000000
-                                 
-                                 ; Calculate baud rate settings
-                                 .equ UBRR_VALUE = F_CPU / 16 / BAUD - 1
-                                 
-                                 ; Define string to send
-                                 .def UBRR_VALUE_High = r16
-                                 .def UBRR_VALUE_Low = r17
-                                 .def ch = r18
-                                 .def temp = r19  ; Temporäres Register für Konfiguration
-                                 
                                  .cseg
                                  .org 0x00
 000000 c000                          rjmp HC_SR04_sensor
                                  
-                                 /*RESET:
-                                     ; Initialize USART
-                                     ldi UBRR_VALUE_High, high(UBRR_VALUE)
-                                     sts UBRR0H, UBRR_VALUE_High
-                                     ldi UBRR_VALUE_Low, low(UBRR_VALUE)
-                                     sts UBRR0L, UBRR_VALUE_Low
-                                     ldi temp, (1 << RXEN0) | (1 << TXEN0)  ; Enable receiver and transmitter
-                                     sts UCSR0B, temp
-                                     ldi temp, (1 << UCSZ01) | (1 << UCSZ00) ; 8 data bits
-                                     sts UCSR0C, temp
-                                 
-                                     ; Send "Hello, World!" string
-                                     ldi ZH, high(hello_string << 1)
-                                     ldi ZL, low(hello_string << 1)
-                                 
-                                 send_loop:
-                                     lpm ch, Z+
-                                     tst ch
-                                     breq done
-                                     rcall send_char
-                                     rjmp send_loop
-                                 
-                                 done:
-                                     rjmp done
-                                 
-                                 send_char:
-                                     ; Wait for empty transmit buffer
-                                     lds temp, UCSR0A
-                                     sbrs temp, UDRE0
-                                     rjmp send_char
-                                 
-                                     ; Put data into buffer, sends the data
-                                     sts UDR0, ch
-                                     ret*/
                                  
                                  HC_SR04_sensor:
                                  ;--------------
-000001 9a21                          SBI   DDRB, 1         ;pin PB1 as o/p (Trigger)
-000002 9820                          CBI   DDRB, 0         ;pin PB0 as i/p (Echo)
+                                 
                                      ;-----------------------------------------------------------
-000003 9a29                      agn:SBI   PORTB, 1
-000004 d01b                          RCALL delay_timer0
-000005 9829                          CBI   PORTB, 1        ;send 10us high pulse to sensor
+000001 9a20                      agn:SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
+000002 9a28                          SBI   PORTB, 0		  ;start high
+000003 d01c                          RCALL delay_timer0	  ;delay 10µs
+000004 9828                          CBI   PORTB, 0        ;end of high
                                      ;-----------------------------------------------------------
-000006 d002                          RCALL echo_PW         ;compute Echo pulse width count
+000005 d002                          RCALL echo_PW         ;compute Echo pulse width count
                                      ;-----------------------------------------------------------
                                      ;--RCALL byte2decimal    ;covert & display on MAX7219
                                      ;-----------------------------------------------------------
-000007 d026                          RCALL delay_ms
-000008 cffa                          RJMP  agn
+000006 d027                          RCALL delay_ms
+000007 cff9                          RJMP  agn
                                  ;===============================================================
                                  echo_PW:
                                  ;-------
+000008 9820                      	CBI   DDRB, 0         ;pin PB0 as o/p (Echo)
 000009 e040                          LDI   R20, 0b00000000
 00000a 9340 0080                     STS   TCCR1A, R20     ;Timer 1 normal mode
 00000c ec45                          LDI   R20, 0b11000101 ;set for rising edge detection &
@@ -1168,23 +1123,6 @@ C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Absta
 000034 f7d9                          BRNE  l7
 000035 955a                          DEC   R21
 000036 f7c1                          BRNE  l6
-000037 9508                          RET
-                                 
-                                 .dseg
-                                 hello_string:
-000100 48
-000101 65
-000102 6c
-000103 6c
-000104 6f
-000105 2c
-000106 20
-000107 57
-000108 6f
-000109 72
-00010a 6c
-00010b 64
-00010c 21
 
 
 RESOURCE USE INFORMATION
@@ -1235,7 +1173,7 @@ Instructions used: 15 out of 113 (13.3%)
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
 [.cseg] 0x000000 0x000070    112      0    112   32768   0.3%
-[.dseg] 0x000100 0x00010e      0     14     14    2048   0.7%
+[.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
 Assembly complete, 0 errors, 0 warnings

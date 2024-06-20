@@ -12,56 +12,10 @@
 ; Define baud rate
 .include "m328pdef.inc"
 
-.equ BAUD = 9600
-.equ F_CPU = 16000000
-
-; Calculate baud rate settings
-.equ UBRR_VALUE = F_CPU / 16 / BAUD - 1
-
-; Define string to send
-.def UBRR_VALUE_High = r16
-.def UBRR_VALUE_Low = r17
-.def ch = r18
-.def temp = r19  ; Temporäres Register für Konfiguration
-
 .cseg
 .org 0x00
     rjmp HC_SR04_sensor
 
-/*RESET:
-    ; Initialize USART
-    ldi UBRR_VALUE_High, high(UBRR_VALUE)
-    sts UBRR0H, UBRR_VALUE_High
-    ldi UBRR_VALUE_Low, low(UBRR_VALUE)
-    sts UBRR0L, UBRR_VALUE_Low
-    ldi temp, (1 << RXEN0) | (1 << TXEN0)  ; Enable receiver and transmitter
-    sts UCSR0B, temp
-    ldi temp, (1 << UCSZ01) | (1 << UCSZ00) ; 8 data bits
-    sts UCSR0C, temp
-
-    ; Send "Hello, World!" string
-    ldi ZH, high(hello_string << 1)
-    ldi ZL, low(hello_string << 1)
-
-send_loop:
-    lpm ch, Z+
-    tst ch
-    breq done
-    rcall send_char
-    rjmp send_loop
-
-done:
-    rjmp done
-
-send_char:
-    ; Wait for empty transmit buffer
-    lds temp, UCSR0A
-    sbrs temp, UDRE0
-    rjmp send_char
-
-    ; Put data into buffer, sends the data
-    sts UDR0, ch
-    ret*/
 
 HC_SR04_sensor:
 ;--------------
@@ -139,7 +93,3 @@ l8: DEC   R23
     DEC   R21
     BRNE  l6
     RET
-
-.dseg
-hello_string:
-    .db "Hello, World!", 0

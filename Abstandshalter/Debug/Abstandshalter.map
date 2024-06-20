@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Abstandshalter\Abstandshalter\main.asm Thu Jun 13 11:13:55 2024
+AVRASM ver. 2.2.8  C:\Users\PDrue\Hochschule\Semester6\Mikrocontrollerprogrammierung\Projekte\Projekt_Repo\DistanceSensorAssembly\Abstandshalter\main.asm Thu Jun 20 10:46:09 2024
 
 
 EQU  SIGNATURE_000 0000001e
@@ -695,17 +695,10 @@ EQU  ACIaddr      0000002e
 EQU  TWIaddr      00000030
 EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
-EQU  BAUD         00002580
-EQU  F_CPU        00f42400
-EQU  UBRR_VALUE   00000067
-DEF  UBRR_VALUE_High r16
-DEF  UBRR_VALUE_Low r17
-DEF  ch           r18
-DEF  temp         r19
 CSEG HC_SR04_sensor 00000001
-CSEG agn          00000003
+CSEG agn          00000001
 CSEG delay_timer0 00000020
-CSEG echo_PW      00000009
+CSEG echo_PW      00000008
 CSEG delay_ms     0000002e
 CSEG l1           0000000f
 CSEG l2           00000018
@@ -713,4 +706,3 @@ CSEG l0           00000026
 CSEG l6           0000002f
 CSEG l7           00000030
 CSEG l8           00000031
-DSEG hello_string 00000100
