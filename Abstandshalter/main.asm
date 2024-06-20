@@ -2,14 +2,8 @@
 ; Abstandshalter.asm
 ;
 ; Created: 05/06/2024 22:20:34
-; Author : PDrue
-;
+; Authors : Philipp Drüke, Jorrit Ohm
 
-
-; Replace with your application code
-; Define baud rate
-
-; Define baud rate
 .include "m328pdef.inc"
 
 .cseg
@@ -27,8 +21,6 @@ agn:SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
     CBI   PORTB, 0        ;end of high
     ;-----------------------------------------------------------
     RCALL echo_PW         ;compute Echo pulse width count
-    ;-----------------------------------------------------------
-    ;--RCALL byte2decimal    ;covert & display on MAX7219
     ;-----------------------------------------------------------
     RCALL delay_ms
     RJMP  agn
