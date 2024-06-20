@@ -65,12 +65,12 @@ send_char:
 
 HC_SR04_sensor:
 ;--------------
-    SBI   DDRB, 1         ;pin PB1 as o/p (Trigger)
-    CBI   DDRB, 0         ;pin PB0 as i/p (Echo)
+
     ;-----------------------------------------------------------
-agn:SBI   PORTB, 1
-    RCALL delay_timer0
-    CBI   PORTB, 1        ;send 10us high pulse to sensor
+agn:SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
+    SBI   PORTB, 0		  ;start high
+    RCALL delay_timer0	  ;delay 10µs
+    CBI   PORTB, 0        ;end of high
     ;-----------------------------------------------------------
     RCALL echo_PW         ;compute Echo pulse width count
     ;-----------------------------------------------------------
@@ -81,6 +81,7 @@ agn:SBI   PORTB, 1
 ;===============================================================
 echo_PW:
 ;-------
+	CBI   DDRB, 0         ;pin PB0 as o/p (Echo)
     LDI   R20, 0b00000000
     STS   TCCR1A, R20     ;Timer 1 normal mode
     LDI   R20, 0b11000101 ;set for rising edge detection &
