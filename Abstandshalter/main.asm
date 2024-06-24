@@ -13,7 +13,10 @@
 
 HC_SR04_sensor:
 ;--------------
-
+	;set LED Pins to Trigger
+	SBI DDRD, 7 ;green
+	SBI DDRD, 6 ;yellow
+	SBI DDRD, 5 ;red 
     ;-----------------------------------------------------------
 agn:SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
     SBI   PORTB, 0		  ;start high
@@ -22,7 +25,22 @@ agn:SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
     ;-----------------------------------------------------------
     RCALL echo_PW         ;compute Echo pulse width count
     ;-----------------------------------------------------------
-    RCALL delay_ms
+	;clear LED 
+	CBI PORTD, 7
+	CBI PORTD, 6
+	CBI PORTD, 5
+
+	;set LED
+
+	CPI R28, 40
+	BRMI red
+	 
+	CPI R28, 100
+	BRMI yellow
+
+	CPI R28, 255
+	BRMI green 
+
     RJMP  agn
 ;===============================================================
 echo_PW:
@@ -85,3 +103,16 @@ l8: DEC   R23
     DEC   R21
     BRNE  l6
     RET
+
+green:
+	SBI PORTD, 7
+	RET
+
+yellow:
+	SBI PORTD, 6
+	RET
+
+red:
+	SBI PORTD, 5
+	RET
+	
