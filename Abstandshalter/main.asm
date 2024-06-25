@@ -14,9 +14,10 @@
 HC_SR04_sensor:
 ;--------------
 	;set LED Pins to Trigger
-	SBI DDRD, 7 ;green
-	SBI DDRD, 6 ;yellow
-	SBI DDRD, 5 ;red 
+	SBI DDRD, 7		; green
+	SBI DDRD, 6		; yellow
+	SBI DDRD, 5		; red 
+	SBI DDRD, 4		; buzzer
     ;-----------------------------------------------------------
 agn:RCALL delay_ms
 	SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
@@ -28,78 +29,82 @@ agn:RCALL delay_ms
     ;-----------------------------------------------------------
 	;set LED
 
-    CPI R28, 40
-    BRMI red
-	CLN
+    CPI R28, 40		; if distance < 40 
+    BRMI red		; red aufrufen
 
-    CPI R28, 100
-    BRMI yellow
-	CLN
+    CPI R28, 100	; if distance < 100
+    BRMI yellow		; yellow aufrufen
 
-	SBI PORTD, 7
-	CBI PORTD, 6
-	CBI PORTD, 5
+	
+	SBI PORTD, 7	; set green LED
+	CBI PORTD, 6	; clear yellow LED
+	CBI PORTD, 5	; clear red LED
+	CBI PORTD, 4	; clear buzzer
 
 	RJMP agn
 
 ;==============================================================
 red:
-	SBI PORTD, 5
-	SBI PORTD, 6
+	SBI PORTD, 5	; set red LED
+	SBI PORTD, 6	; set ýellow LED
+	SBI PORTD, 4	; set buzzer
 	RJMP agn
 
 yellow:
-	SBI PORTD, 6
-	CBI PORTD, 5
+	SBI PORTD, 6	; set yellow LED
+	CBI PORTD, 5	; clear red LED
+	CBI PORTD, 4	; clear buzzer
 	RJMP agn
+
+
 
 ;===============================================================
 echo_PW:
 ;-------
-	CBI   DDRB, 0         ;pin PB0 as o/p (Echo)
+	CBI   DDRB, 0         ; pin PB0 as o/p (Echo)
     LDI   R20, 0b00000000
-    STS   TCCR1A, R20     ;Timer 1 normal mode
-    LDI   R20, 0b11000101 ;set for rising edge detection &
-    STS   TCCR1B, R20     ;prescaler=1024, noise cancellation ON
+    STS   TCCR1A, R20     ; Timer 1 normal mode
+    LDI   R20, 0b11000101 ; set for rising edge detection &
+    STS   TCCR1B, R20     ; prescaler=1024, noise cancellation ON
     ;-----------------------------------------------------------
 l1: IN    R21, TIFR1
     SBRS  R21, ICF1
-    RJMP  l1              ;loop until rising edge is detected
+    RJMP  l1              ; loop until rising edge is detected
     ;-----------------------------------------------------------
-    LDS   R16, ICR1L      ;store count value at rising edge
+    LDS   R16, ICR1L      ; store count value at rising edge
     ;-----------------------------------------------------------
-    OUT   TIFR1, R21      ;clear flag for falling edge detection
+    OUT   TIFR1, R21      ; clear flag for falling edge detection
     LDI   R20, 0b10000101
-    STS   TCCR1B, R20     ;set for falling edge detection
+    STS   TCCR1B, R20     ; set for falling edge detection
     ;-----------------------------------------------------------
 l2: IN    R21, TIFR1
     SBRS  R21, ICF1
-    RJMP  l2              ;loop until falling edge is detected
+    RJMP  l2              ; loop until falling edge is detected
     ;-----------------------------------------------------------
-    LDS   R28, ICR1L      ;store count value at falling edge
+    LDS   R28, ICR1L      ; store count value at falling edge
     ;-----------------------------------------------------------
-    SUB   R28, R16        ;count diff R22 = R22 - R16
-    OUT   TIFR1, R21      ;clear flag for next sensor reading
+    SUB   R28, R16        ; count diff R22 = R22 - R16
+    OUT   TIFR1, R21      ; clear flag for next sensor reading
     RET
 
-	delay_timer0:             ;10 usec delay via Timer 0
+	delay_timer0:         ; 10 usec delay via Timer 0
 ;------------
     CLR   R20
-    OUT   TCNT0, R20      ;initialize timer0 with count=0
+    OUT   TCNT0, R20      ; initialize timer0 with count=0
     LDI   R20, 20
-    OUT   OCR0A, R20      ;OCR0 = 20
+    OUT   OCR0A, R20      ; OCR0 = 20
     LDI   R20, 0b00001010
-    OUT   TCCR0B, R20     ;timer0: CTC mode, prescaler 8
+    OUT   TCCR0B, R20     ; timer0: CTC mode, prescaler 8
     ;-----------------------------------------------------------
-l0: IN    R20, TIFR0      ;get TIFR0 byte & check
-    SBRS  R20, OCF0A      ;if OCF0=1, skip next instruction
-    RJMP  l0              ;else, loop back & check OCF0 flag
+l0: IN    R20, TIFR0      ; get TIFR0 byte & check
+    SBRS  R20, OCF0A      ; if OCF0=1, skip next instruction
+    RJMP  l0              ; else, loop back & check OCF0 flag
     ;-----------------------------------------------------------
     CLR   R20
-    OUT   TCCR0B, R20     ;stop timer0
+    OUT   TCCR0B, R20     ; stop timer0
     ;-----------------------------------------------------------
     LDI   R20, (1<<OCF0A)
-    OUT   TIFR0, R20      ;clear OCF0 flag
+    OUT   TIFR0, R20      ; clear OCF0 flag
     RET
 ;===============================================================
 delay_ms:
@@ -114,4 +119,3 @@ l8: DEC   R23
     DEC   R21
     BRNE  l6
     RET
-
