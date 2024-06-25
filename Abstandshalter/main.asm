@@ -26,14 +26,14 @@ agn:SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
     RCALL echo_PW         ;compute Echo pulse width count
     ;-----------------------------------------------------------
 	;clear LED 
-	CBI PORTD, 7
-	CBI PORTD, 6
-	CBI PORTD, 5
+	;CBI PORTD, 7
+	;CBI PORTD, 6
+	;CBI PORTD, 5
 
 	;set LED
 
-	CPI R28, 40
-	BRMI red
+	;CPI R28, 40
+	;BRMI red
 	 
 	CPI R28, 100
 	BRMI yellow
@@ -106,10 +106,12 @@ l8: DEC   R23
 
 green:
 	SBI PORTD, 7
+	CBI PORTD, 6
 	RET
 
 yellow:
 	SBI PORTD, 6
+	CBI PORTD, 5
 	RET
 
 red:
