@@ -45,6 +45,7 @@ agn:RCALL delay_ms
 ;==============================================================
 red:
 	SBI PORTD, 5
+	SBI PORTD, 6
 	RJMP agn
 
 yellow:

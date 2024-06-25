@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm Tue Jun 25 23:47:50 2024
+AVRASM ver. 2.2.8  C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm Tue Jun 25 23:52:29 2024
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm(7): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328pdef.inc'
@@ -1049,13 +1049,13 @@ C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\Distance
 000002 9a56                      	SBI DDRD, 6 ;yellow
 000003 9a55                      	SBI DDRD, 5 ;red 
                                      ;-----------------------------------------------------------
-000004 d03a                      agn:RCALL delay_ms
+000004 d03b                      agn:RCALL delay_ms
 000005 9a20                      	SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
 000006 9a28                          SBI   PORTB, 0		  ;start high
-000007 d029                          RCALL delay_timer0	  ;delay 10µs
+000007 d02a                          RCALL delay_timer0	  ;delay 10µs
 000008 9828                          CBI   PORTB, 0        ;end of high
                                      ;-----------------------------------------------------------
-000009 d00f                          RCALL echo_PW         ;compute Echo pulse width count
+000009 d010                          RCALL echo_PW         ;compute Echo pulse width count
                                      ;-----------------------------------------------------------
                                  	;set LED
                                  
@@ -1064,9 +1064,8 @@ C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\Distance
 00000c 94a8                      	CLN
                                  
 00000d 36c4                          CPI R28, 100
-00000e f03a                          BRMI yellow
+00000e f042                          BRMI yellow
 00000f 94a8                      	CLN
-                                 
                                  
 000010 9a5f                      	SBI PORTD, 7
 000011 985e                      	CBI PORTD, 6
@@ -1077,74 +1076,75 @@ C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\Distance
                                  ;==============================================================
                                  red:
 000014 9a5d                      	SBI PORTD, 5
-000015 cfee                      	RJMP agn
+000015 9a5e                      	SBI PORTD, 6
+000016 cfed                      	RJMP agn
                                  
                                  yellow:
-000016 9a5e                      	SBI PORTD, 6
-000017 985d                      	CBI PORTD, 5
-000018 cfeb                      	RJMP agn
+000017 9a5e                      	SBI PORTD, 6
+000018 985d                      	CBI PORTD, 5
+000019 cfea                      	RJMP agn
                                  
                                  ;===============================================================
                                  echo_PW:
                                  ;-------
-000019 9820                      	CBI   DDRB, 0         ;pin PB0 as o/p (Echo)
-00001a e040                          LDI   R20, 0b00000000
-00001b 9340 0080                     STS   TCCR1A, R20     ;Timer 1 normal mode
-00001d ec45                          LDI   R20, 0b11000101 ;set for rising edge detection &
-00001e 9340 0081                     STS   TCCR1B, R20     ;prescaler=1024, noise cancellation ON
+00001a 9820                      	CBI   DDRB, 0         ;pin PB0 as o/p (Echo)
+00001b e040                          LDI   R20, 0b00000000
+00001c 9340 0080                     STS   TCCR1A, R20     ;Timer 1 normal mode
+00001e ec45                          LDI   R20, 0b11000101 ;set for rising edge detection &
+00001f 9340 0081                     STS   TCCR1B, R20     ;prescaler=1024, noise cancellation ON
                                      ;-----------------------------------------------------------
-000020 b356                      l1: IN    R21, TIFR1
-000021 ff55                          SBRS  R21, ICF1
-000022 cffd                          RJMP  l1              ;loop until rising edge is detected
+000021 b356                      l1: IN    R21, TIFR1
+000022 ff55                          SBRS  R21, ICF1
+000023 cffd                          RJMP  l1              ;loop until rising edge is detected
                                      ;-----------------------------------------------------------
-000023 9100 0086                     LDS   R16, ICR1L      ;store count value at rising edge
+000024 9100 0086                     LDS   R16, ICR1L      ;store count value at rising edge
                                      ;-----------------------------------------------------------
-000025 bb56                          OUT   TIFR1, R21      ;clear flag for falling edge detection
-000026 e845                          LDI   R20, 0b10000101
-000027 9340 0081                     STS   TCCR1B, R20     ;set for falling edge detection
+000026 bb56                          OUT   TIFR1, R21      ;clear flag for falling edge detection
+000027 e845                          LDI   R20, 0b10000101
+000028 9340 0081                     STS   TCCR1B, R20     ;set for falling edge detection
                                      ;-----------------------------------------------------------
-000029 b356                      l2: IN    R21, TIFR1
-00002a ff55                          SBRS  R21, ICF1
-00002b cffd                          RJMP  l2              ;loop until falling edge is detected
+00002a b356                      l2: IN    R21, TIFR1
+00002b ff55                          SBRS  R21, ICF1
+00002c cffd                          RJMP  l2              ;loop until falling edge is detected
                                      ;-----------------------------------------------------------
-00002c 91c0 0086                     LDS   R28, ICR1L      ;store count value at falling edge
+00002d 91c0 0086                     LDS   R28, ICR1L      ;store count value at falling edge
                                      ;-----------------------------------------------------------
-00002e 1bc0                          SUB   R28, R16        ;count diff R22 = R22 - R16
-00002f bb56                          OUT   TIFR1, R21      ;clear flag for next sensor reading
-000030 9508                          RET
+00002f 1bc0                          SUB   R28, R16        ;count diff R22 = R22 - R16
+000030 bb56                          OUT   TIFR1, R21      ;clear flag for next sensor reading
+000031 9508                          RET
                                  
                                  	delay_timer0:             ;10 usec delay via Timer 0
                                  ;------------
-000031 2744                          CLR   R20
-000032 bd46                          OUT   TCNT0, R20      ;initialize timer0 with count=0
-000033 e144                          LDI   R20, 20
-000034 bd47                          OUT   OCR0A, R20      ;OCR0 = 20
-000035 e04a                          LDI   R20, 0b00001010
-000036 bd45                          OUT   TCCR0B, R20     ;timer0: CTC mode, prescaler 8
+000032 2744                          CLR   R20
+000033 bd46                          OUT   TCNT0, R20      ;initialize timer0 with count=0
+000034 e144                          LDI   R20, 20
+000035 bd47                          OUT   OCR0A, R20      ;OCR0 = 20
+000036 e04a                          LDI   R20, 0b00001010
+000037 bd45                          OUT   TCCR0B, R20     ;timer0: CTC mode, prescaler 8
                                      ;-----------------------------------------------------------
-000037 b345                      l0: IN    R20, TIFR0      ;get TIFR0 byte & check
-000038 ff41                          SBRS  R20, OCF0A      ;if OCF0=1, skip next instruction
-000039 cffd                          RJMP  l0              ;else, loop back & check OCF0 flag
+000038 b345                      l0: IN    R20, TIFR0      ;get TIFR0 byte & check
+000039 ff41                          SBRS  R20, OCF0A      ;if OCF0=1, skip next instruction
+00003a cffd                          RJMP  l0              ;else, loop back & check OCF0 flag
                                      ;-----------------------------------------------------------
-00003a 2744                          CLR   R20
-00003b bd45                          OUT   TCCR0B, R20     ;stop timer0
+00003b 2744                          CLR   R20
+00003c bd45                          OUT   TCCR0B, R20     ;stop timer0
                                      ;-----------------------------------------------------------
-00003c e042                          LDI   R20, (1<<OCF0A)
-00003d bb45                          OUT   TIFR0, R20      ;clear OCF0 flag
-00003e 9508                          RET
+00003d e042                          LDI   R20, (1<<OCF0A)
+00003e bb45                          OUT   TIFR0, R20      ;clear OCF0 flag
+00003f 9508                          RET
                                  ;===============================================================
                                  delay_ms:
                                  ;--------
-00003f ef5f                          LDI   R21, 255
-000040 ef6f                      l6: LDI   R22, 255
-000041 e372                      l7: LDI   R23, 50
-000042 957a                      l8: DEC   R23
-000043 f7f1                          BRNE  l8
-000044 956a                          DEC   R22
-000045 f7d9                          BRNE  l7
-000046 955a                          DEC   R21
-000047 f7c1                          BRNE  l6
-000048 9508                          RET
+000040 ef5f                          LDI   R21, 255
+000041 ef6f                      l6: LDI   R22, 255
+000042 e372                      l7: LDI   R23, 50
+000043 957a                      l8: DEC   R23
+000044 f7f1                          BRNE  l8
+000045 956a                          DEC   R22
+000046 f7d9                          BRNE  l7
+000047 955a                          DEC   R21
+000048 f7c1                          BRNE  l6
+000049 9508                          RET
                                  
 
 
@@ -1185,7 +1185,7 @@ ld    :   0 ldd   :   0 ldi   :   9 lds   :   2 lpm   :   0 lsl   :   0
 lsr   :   0 mov   :   0 movw  :   0 mul   :   0 muls  :   0 mulsu :   0 
 neg   :   0 nop   :   0 or    :   0 ori   :   0 out   :   7 pop   :   0 
 push  :   0 rcall :   3 ret   :   3 reti  :   0 rjmp  :   7 rol   :   0 
-ror   :   0 sbc   :   0 sbci  :   0 sbi   :   8 sbic  :   0 sbis  :   0 
+ror   :   0 sbc   :   0 sbci  :   0 sbi   :   9 sbic  :   0 sbis  :   0 
 sbiw  :   0 sbr   :   0 sbrc  :   0 sbrs  :   3 sec   :   0 seh   :   0 
 sei   :   0 sen   :   0 ser   :   0 ses   :   0 set   :   0 sev   :   0 
 sez   :   0 sleep :   0 spm   :   0 st    :   0 std   :   0 sts   :   3 
@@ -1195,7 +1195,7 @@ Instructions used: 18 out of 113 (15.9%)
 "ATmega328P" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000092    146      0    146   32768   0.4%
+[.cseg] 0x000000 0x000094    148      0    148   32768   0.5%
 [.dseg] 0x000100 0x000100      0      0      0    2048   0.0%
 [.eseg] 0x000000 0x000000      0      0      0    1024   0.0%
 
