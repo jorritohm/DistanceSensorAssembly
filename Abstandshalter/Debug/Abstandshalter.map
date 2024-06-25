@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm Wed Jun 26 00:19:29 2024
+AVRASM ver. 2.2.8  C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm Wed Jun 26 00:53:03 2024
 
 
 EQU  SIGNATURE_000 0000001e
@@ -697,14 +697,15 @@ EQU  SPMRaddr     00000032
 EQU  INT_VECTORS_SIZE 00000034
 CSEG HC_SR04_sensor 00000001
 CSEG agn          00000005
-CSEG delay_ms     00000042
-CSEG delay_timer0 00000034
-CSEG echo_PW      0000001c
-CSEG red          00000014
-CSEG yellow       00000018
-CSEG l1           00000023
-CSEG l2           0000002c
-CSEG l0           0000003a
-CSEG l6           00000043
-CSEG l7           00000044
-CSEG l8           00000045
+CSEG delay_ms     0000004b
+CSEG delay_timer0 0000003d
+CSEG echo_PW      00000025
+CSEG red          00000016
+CSEG yellow       0000001b
+CSEG green        00000020
+CSEG l1           0000002c
+CSEG l2           00000035
+CSEG l0           00000043
+CSEG l6           0000004c
+CSEG l7           0000004d
+CSEG l8           0000004e

@@ -29,14 +29,16 @@ agn:RCALL delay_ms
     ;-----------------------------------------------------------
 	;set LED
 
-    CPI R28, 40		; if distance < 40 
+    CPI R28, 30		; if distance < 40 
     BRMI red		; red aufrufen
 
-    CPI R28, 100	; if distance < 100
+    CPI R28, 60		; if distance < 100
     BRMI yellow		; yellow aufrufen
 
+	CPI R28, 100	; if distance < 180
+	BRMI green		; green aufrufen
 	
-	SBI PORTD, 7	; set green LED
+	CBI PORTD, 7	; set green LED
 	CBI PORTD, 6	; clear yellow LED
 	CBI PORTD, 5	; clear red LED
 	CBI PORTD, 4	; clear buzzer
@@ -47,11 +49,20 @@ agn:RCALL delay_ms
 red:
 	SBI PORTD, 5	; set red LED
 	SBI PORTD, 6	; set ýellow LED
+	SBI PORTD, 7	; set green LED
 	SBI PORTD, 4	; set buzzer
 	RJMP agn
 
 yellow:
 	SBI PORTD, 6	; set yellow LED
+	SBI PORTD, 7	; set green LED
+	CBI PORTD, 5	; clear red LED
+	CBI PORTD, 4	; clear buzzer
+	RJMP agn
+
+green:
+	SBI PORTD, 7	; set green LED
+	CBI PORTD, 6	; clear yellow LED
 	CBI PORTD, 5	; clear red LED
 	CBI PORTD, 4	; clear buzzer
 	RJMP agn
