@@ -22,10 +22,10 @@ main:
 ;===============================================================
 main_loop:
 ;---------
-	RCALL delay_ms
+	RCALL loop_delay
 	SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
     SBI   PORTB, 0		  ;start high
-    RCALL delay_timer0	  ;delay 10µs
+    RCALL trigger_timer	  ;delay 10µs
     CBI   PORTB, 0        ;end of high	
 
     ;---calculate distance--------------------------------------
@@ -116,7 +116,7 @@ l2: IN    R21, TIFR1
     RET
 
 ;===============================================================
-delay_timer0:			  ; 10 usec delay via Timer 0
+trigger_timer:			  ; 10 usec delay via Timer 0
 ;------------
     CLR   R20
     OUT   TCNT0, R20      ; initialize timer0 with count=0
@@ -136,9 +136,9 @@ l0: IN    R20, TIFR0      ; get TIFR0 byte & check
     OUT   TIFR0, R20      ; clear OCF0 flag
     RET
 ;===============================================================
-delay_ms:            ;0.125 sec delay via timer1
+loop_delay:               ;0.125 sec delay via timer1
 ;--------
-.EQU value = 63583         ;value to give 0.125 sec delay
+.EQU value = 63583        ;value to give 0.125 sec delay
     LDI   R20, high(value)
     STS   TCNT1H, R20
     LDI   R20, low(value)
@@ -149,9 +149,11 @@ delay_ms:            ;0.125 sec delay via timer1
     LDI   R20, 0b00000101
     STS   TCCR1B, R20     ;normal mode, prescaler = 1024
     ;-------------------------------------------------------
-loop_until_Tov1_set: IN    R20, TIFR1      ;get TIFR1 byte & check
+delay_loop:
+;----------
+	IN    R20, TIFR1      ;get TIFR1 byte & check
     SBRS  R20, TOV1       ;if TOV1=1, skip next instruction
-    RJMP  loop_until_Tov1_set              ;else, loop back & check TOV1 flag
+    RJMP  delay_loop      ;else, loop back & check TOV1 flag
     ;-------------------------------------------------------
     LDI   R20, 1<<TOV1
     OUT   TIFR1, R20      ;clear TOV1 flag

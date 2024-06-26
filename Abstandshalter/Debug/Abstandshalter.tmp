@@ -24,9 +24,9 @@
  </OUTPUT_FILES>
  <LABELS>
   <main><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>14</LINE></main>
-  <main_loop><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>24</LINE></main_loop>
-  <delay_ms><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>139</LINE></delay_ms>
-  <delay_timer0><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>119</LINE></delay_timer0>
+  <main_loop><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>23</LINE></main_loop>
+  <loop_delay><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>139</LINE></loop_delay>
+  <trigger_timer><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>119</LINE></trigger_timer>
   <echo_PW><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>90</LINE></echo_PW>
   <setLED><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>48</LINE></setLED>
   <red><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>63</LINE></red>
@@ -35,6 +35,6 @@
   <l1><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>98</LINE></l1>
   <l2><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>108</LINE></l2>
   <l0><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>128</LINE></l0>
-  <loop_until_Tov1_set><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>152</LINE></loop_until_Tov1_set>
+  <delay_loop><FILE>C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm</FILE><LINE>152</LINE></delay_loop>
  </LABELS>
 </ASSEMBLER_INFO>

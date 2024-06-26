@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.8  C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm Wed Jun 26 02:56:29 2024
+AVRASM ver. 2.2.8  C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm Wed Jun 26 03:09:18 2024
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328Pdef.inc'
 C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\DistanceSensorAssembly\Abstandshalter\main.asm(7): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.7.374\avrasm\inc\m328pdef.inc'
@@ -1041,22 +1041,22 @@ C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\Distance
                                  .org 0x00
 000000 c000                          rjmp main
                                  
-                                 
+                                 ;===============================================================
                                  main:
-                                 ;--------------
-                                 
+                                 ;----
                                  	;---set LED Pins to Trigger---------------------------------
 000001 9a57                      	SBI DDRD, 7		; green
 000002 9a56                      	SBI DDRD, 6		; yellow
 000003 9a55                      	SBI DDRD, 5		; red 
 000004 9a54                      	SBI DDRD, 4		; buzzer
                                  						
-                                     ;---main----------------------------------------------------
+                                 ;===============================================================
                                  main_loop:
-000005 d047                      	RCALL delay_ms
+                                 ;---------
+000005 d047                      	RCALL loop_delay
 000006 9a20                      	SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
 000007 9a28                          SBI   PORTB, 0		  ;start high
-000008 d036                          RCALL delay_timer0	  ;delay 10µs
+000008 d036                          RCALL trigger_timer	  ;delay 10µs
 000009 9828                          CBI   PORTB, 0        ;end of high	
                                  
                                      ;---calculate distance--------------------------------------
@@ -1147,7 +1147,7 @@ C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\Distance
 00003e 9508                          RET
                                  
                                  ;===============================================================
-                                 delay_timer0:			  ; 10 usec delay via Timer 0
+                                 trigger_timer:			  ; 10 usec delay via Timer 0
                                  ;------------
 00003f 2744                          CLR   R20
 000040 bd46                          OUT   TCNT0, R20      ; initialize timer0 with count=0
@@ -1167,9 +1167,9 @@ C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\Distance
 00004b bb45                          OUT   TIFR0, R20      ; clear OCF0 flag
 00004c 9508                          RET
                                  ;===============================================================
-                                 delay_ms:            ;0.125 sec delay via timer1
+                                 loop_delay:               ;0.125 sec delay via timer1
                                  ;--------
-                                 .EQU value = 63583         ;value to give 0.125 sec delay
+                                 .EQU value = 63583        ;value to give 0.125 sec delay
 00004d ef48                          LDI   R20, high(value)
 00004e 9340 0085                     STS   TCNT1H, R20
 000050 e54f                          LDI   R20, low(value)
@@ -1180,9 +1180,11 @@ C:\Users\jorri\OneDrive\Dokumente\Studium\Mikrocontrollerprogrammierung\Distance
 000056 e045                          LDI   R20, 0b00000101
 000057 9340 0081                     STS   TCCR1B, R20     ;normal mode, prescaler = 1024
                                      ;-------------------------------------------------------
-000059 b346                      loop_until_Tov1_set: IN    R20, TIFR1      ;get TIFR1 byte & check
+                                 delay_loop:
+                                 ;----------
+000059 b346                      	IN    R20, TIFR1      ;get TIFR1 byte & check
 00005a ff40                          SBRS  R20, TOV1       ;if TOV1=1, skip next instruction
-00005b cffd                          RJMP  loop_until_Tov1_set              ;else, loop back & check TOV1 flag
+00005b cffd                          RJMP  delay_loop      ;else, loop back & check TOV1 flag
                                      ;-------------------------------------------------------
 00005c e041                          LDI   R20, 1<<TOV1
 00005d bb46                          OUT   TIFR1, R20      ;clear TOV1 flag
