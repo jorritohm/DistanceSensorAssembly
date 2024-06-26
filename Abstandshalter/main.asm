@@ -13,61 +13,79 @@
 
 HC_SR04_sensor:
 ;--------------
-	;set LED Pins to Trigger
+
+	;---set LED Pins to Trigger---------------------------------
 	SBI DDRD, 7		; green
 	SBI DDRD, 6		; yellow
 	SBI DDRD, 5		; red 
 	SBI DDRD, 4		; buzzer
-    ;-----------------------------------------------------------
+
+    ;---main----------------------------------------------------
 agn:RCALL delay_ms
 	SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
     SBI   PORTB, 0		  ;start high
     RCALL delay_timer0	  ;delay 10µs
     CBI   PORTB, 0        ;end of high
-    ;-----------------------------------------------------------
+
+    ;---calculate distance--------------------------------------
     RCALL echo_PW         ;compute Echo pulse width count
-    ;-----------------------------------------------------------
-	;set LED
 
-    CPI R28, 30		; if distance < 40 
-    BRMI red		; red aufrufen
-
-    CPI R28, 60		; if distance < 100
-    BRMI yellow		; yellow aufrufen
-
-	CPI R28, 100	; if distance < 180
-	BRMI green		; green aufrufen
-	
-	CBI PORTD, 7	; set green LED
+	;---skip if >= 128------------------------------------------
+	SBRS R28, 7
+	RCALL setLED
+   	
+	;---reset LEDs----------------------------------------------	
+	CBI PORTD, 7	; clear green LED
 	CBI PORTD, 6	; clear yellow LED
 	CBI PORTD, 5	; clear red LED
 	CBI PORTD, 4	; clear buzzer
 
+	;---loop----------------------------------------------------
 	RJMP agn
 
 ;==============================================================
+setLED:
+;------
+	;---set red LED---------------------------------------------
+    CPI R28, 30		; if distance < 30 
+    BRMI red		; red aufrufen
+
+	;---set yellow LED------------------------------------------
+    CPI R28, 60		; if distance < 60
+    BRMI yellow		; yellow aufrufen
+
+	;---set green LED-------------------------------------------
+	CPI R28, 100	; if distance < 100
+	BRMI green		; green aufrufen
+
+	RET
+
+;==============================================================
 red:
+;---
 	SBI PORTD, 5	; set red LED
 	SBI PORTD, 6	; set ýellow LED
 	SBI PORTD, 7	; set green LED
 	SBI PORTD, 4	; set buzzer
-	RJMP agn
+	RJMP agn		; loop
 
+;==============================================================
 yellow:
+;------
 	SBI PORTD, 6	; set yellow LED
 	SBI PORTD, 7	; set green LED
 	CBI PORTD, 5	; clear red LED
 	CBI PORTD, 4	; clear buzzer
-	RJMP agn
+	RJMP agn		; loop
 
+;==============================================================
 green:
+;-----
 	SBI PORTD, 7	; set green LED
 	CBI PORTD, 6	; clear yellow LED
 	CBI PORTD, 5	; clear red LED
 	CBI PORTD, 4	; clear buzzer
-	RJMP agn
-
-
+	RJMP agn		; loop
 
 ;===============================================================
 echo_PW:
@@ -98,7 +116,8 @@ l2: IN    R21, TIFR1
     OUT   TIFR1, R21      ; clear flag for next sensor reading
     RET
 
-	delay_timer0:         ; 10 usec delay via Timer 0
+;===============================================================
+delay_timer0:         ; 10 usec delay via Timer 0
 ;------------
     CLR   R20
     OUT   TCNT0, R20      ; initialize timer0 with count=0
@@ -114,7 +133,7 @@ l0: IN    R20, TIFR0      ; get TIFR0 byte & check
     CLR   R20
     OUT   TCCR0B, R20     ; stop timer0
     ;-----------------------------------------------------------
-    LDI   R20, (1<<OCF0A)
+    LDI   R20, (1<<OCF0A) ; set bit in Register
     OUT   TIFR0, R20      ; clear OCF0 flag
     RET
 ;===============================================================
