@@ -2,7 +2,8 @@
 ; Abstandshalter.asm
 ;
 ; Created: 05/06/2024 22:20:34
-; Authors : Philipp Drüke, Jorrit Ohm
+; Authors : Philipp Drï¿½ke, Jorrit Ohm
+; Gruppe : F
 
 .include "m328pdef.inc"
 
@@ -14,18 +15,18 @@
 main:
 ;----
 	;---set LED Pins to Trigger---------------------------------
-	SBI DDRD, 7		; green
-	SBI DDRD, 6		; yellow
-	SBI DDRD, 5		; red 
-	SBI DDRD, 4		; buzzer
+	SBI DDRD, 7		; green (Port D7)
+	SBI DDRD, 6		; yellow (Port D6)
+	SBI DDRD, 5		; red  (Port D5)
+	SBI DDRD, 4		; buzzer (Port D4)
 						
 ;===============================================================
 main_loop:
 ;---------
 	RCALL loop_delay
-	SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
+	SBI   DDRB, 0         ;pin PB0 (Port D8 for Ultrasonic Sensor) as o/p (Trigger) 
     SBI   PORTB, 0		  ;start high
-    RCALL trigger_timer	  ;delay 10µs
+    RCALL trigger_timer	  ;delay 10ï¿½s
     CBI   PORTB, 0        ;end of high	
 
     ;---calculate distance--------------------------------------
@@ -56,14 +57,14 @@ setLED:
     BRMI yellow		; yellow aufrufen
 
 	;---set green LED-------------------------------------------
-	CPI R28, 127	; if distance < 100
+	CPI R28, 127	; if distance < 127
 	BRMI green		; green aufrufen
 
 ;==============================================================
 red:
 ;---
 	SBI PORTD, 5	; set red LED
-	SBI PORTD, 6	; set ýellow LED
+	SBI PORTD, 6	; set ï¿½ellow LED
 	SBI PORTD, 7	; set green LED
 	SBI PORTD, 4	; set buzzer
 	RJMP main_loop	; loop
@@ -91,7 +92,7 @@ echo_PW:
 ;-------
 	CBI   DDRB, 0         ; pin PB0 as o/p (Echo)
     LDI   R20, 0b00000000
-    STS   TCCR1A, R20     ; Timer 1 normal mode
+    STS   TCCR1A, R20     ; set Timer 1 normal mode
     LDI   R20, 0b11000101 ; set for rising edge detection &
     STS   TCCR1B, R20     ; prescaler=1024, noise cancellation ON
     ;-----------------------------------------------------------
@@ -119,18 +120,18 @@ l2: IN    R21, TIFR1
 trigger_timer:			  ; 10 usec delay via Timer 0
 ;------------
     CLR   R20
-    OUT   TCNT0, R20      ; initialize timer0 with count=0
+    OUT   TCNT0, R20      ; initialize trigger timer with count=0
     LDI   R20, 20
     OUT   OCR0A, R20      ; OCR0 = 20
     LDI   R20, 0b00001010
-    OUT   TCCR0B, R20     ; timer0: CTC mode, prescaler 8
+    OUT   TCCR0B, R20     ; trigger_timer: CTC mode, prescaler 8
     ;-----------------------------------------------------------
-l0: IN    R20, TIFR0      ; get TIFR0 byte & check
-    SBRS  R20, OCF0A      ; if OCF0=1, skip next instruction
+l0: IN    R20, TIFR0      ; get TIFR0 byte & check OCF0 Flag
+    SBRS  R20, OCF0A      ; if OCF0 Flag is set, skip next instruction
     RJMP  l0              ; else, loop back & check OCF0 flag
     ;-----------------------------------------------------------
     CLR   R20
-    OUT   TCCR0B, R20     ; stop timer0
+    OUT   TCCR0B, R20     ; stop trigger_timer
     ;-----------------------------------------------------------
     LDI   R20, (1<<OCF0A) ; set bit in Register
     OUT   TIFR0, R20      ; clear OCF0 flag
@@ -149,15 +150,15 @@ loop_delay:               ;0.125 sec delay via timer1
     LDI   R20, 0b00000101
     STS   TCCR1B, R20     ;normal mode, prescaler = 1024
     ;-------------------------------------------------------
-delay_loop:
+TOV1_loop:
 ;----------
 	IN    R20, TIFR1      ;get TIFR1 byte & check
-    SBRS  R20, TOV1       ;if TOV1=1, skip next instruction
-    RJMP  delay_loop      ;else, loop back & check TOV1 flag
+    SBRS  R20, TOV1       ;if TOV1 Flag is set, skip next instruction
+    RJMP  TOV1_loop      ;else, loop back & check TOV1 flag
     ;-------------------------------------------------------
     LDI   R20, 1<<TOV1
     OUT   TIFR1, R20      ;clear TOV1 flag
     ;-------------------------------------------------------
     LDI   R20, 0b00000000
-    STS   TCCR1B, R20     ;stop timer0
+    STS   TCCR1B, R20     ;stop loop_delay
     RET
