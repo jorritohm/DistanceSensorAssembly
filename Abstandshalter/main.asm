@@ -10,18 +10,18 @@
 .org 0x00
     rjmp main
 
-
+;===============================================================
 main:
-;--------------
-
+;----
 	;---set LED Pins to Trigger---------------------------------
 	SBI DDRD, 7		; green
 	SBI DDRD, 6		; yellow
 	SBI DDRD, 5		; red 
 	SBI DDRD, 4		; buzzer
 						
-    ;---main----------------------------------------------------
+;===============================================================
 main_loop:
+;---------
 	RCALL delay_ms
 	SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
     SBI   PORTB, 0		  ;start high
