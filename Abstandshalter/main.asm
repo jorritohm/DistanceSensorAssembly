@@ -8,10 +8,10 @@
 
 .cseg
 .org 0x00
-    rjmp HC_SR04_sensor
+    rjmp main
 
 
-HC_SR04_sensor:
+main:
 ;--------------
 
 	;---set LED Pins to Trigger---------------------------------
@@ -19,20 +19,21 @@ HC_SR04_sensor:
 	SBI DDRD, 6		; yellow
 	SBI DDRD, 5		; red 
 	SBI DDRD, 4		; buzzer
-
+						
     ;---main----------------------------------------------------
-agn:RCALL delay_ms
+main_loop:
+	RCALL delay_ms
 	SBI   DDRB, 0         ;pin PB0 as o/p (Trigger)
     SBI   PORTB, 0		  ;start high
     RCALL delay_timer0	  ;delay 10µs
-    CBI   PORTB, 0        ;end of high
+    CBI   PORTB, 0        ;end of high	
 
     ;---calculate distance--------------------------------------
     RCALL echo_PW         ;compute Echo pulse width count
 
-	;---skip if >= 128------------------------------------------
-	SBRS R28, 7
-	RCALL setLED
+	;---set LEDs if distance < 128------------------------------
+	CPI R28, 127
+	BRMI setLED
    	
 	;---reset LEDs----------------------------------------------	
 	CBI PORTD, 7	; clear green LED
@@ -41,7 +42,7 @@ agn:RCALL delay_ms
 	CBI PORTD, 4	; clear buzzer
 
 	;---loop----------------------------------------------------
-	RJMP agn
+	RJMP main_loop
 
 ;==============================================================
 setLED:
@@ -55,10 +56,8 @@ setLED:
     BRMI yellow		; yellow aufrufen
 
 	;---set green LED-------------------------------------------
-	CPI R28, 100	; if distance < 100
+	CPI R28, 127	; if distance < 100
 	BRMI green		; green aufrufen
-
-	RET
 
 ;==============================================================
 red:
@@ -67,7 +66,7 @@ red:
 	SBI PORTD, 6	; set ýellow LED
 	SBI PORTD, 7	; set green LED
 	SBI PORTD, 4	; set buzzer
-	RJMP agn		; loop
+	RJMP main_loop	; loop
 
 ;==============================================================
 yellow:
@@ -76,7 +75,7 @@ yellow:
 	SBI PORTD, 7	; set green LED
 	CBI PORTD, 5	; clear red LED
 	CBI PORTD, 4	; clear buzzer
-	RJMP agn		; loop
+	RJMP main_loop	; loop
 
 ;==============================================================
 green:
@@ -85,7 +84,7 @@ green:
 	CBI PORTD, 6	; clear yellow LED
 	CBI PORTD, 5	; clear red LED
 	CBI PORTD, 4	; clear buzzer
-	RJMP agn		; loop
+	RJMP main_loop	; loop
 
 ;===============================================================
 echo_PW:
@@ -117,7 +116,7 @@ l2: IN    R21, TIFR1
     RET
 
 ;===============================================================
-delay_timer0:         ; 10 usec delay via Timer 0
+delay_timer0:			  ; 10 usec delay via Timer 0
 ;------------
     CLR   R20
     OUT   TCNT0, R20      ; initialize timer0 with count=0
@@ -137,15 +136,26 @@ l0: IN    R20, TIFR0      ; get TIFR0 byte & check
     OUT   TIFR0, R20      ; clear OCF0 flag
     RET
 ;===============================================================
-delay_ms:
+delay_ms:            ;0.125 sec delay via timer1
 ;--------
-    LDI   R21, 255
-l6: LDI   R22, 255
-l7: LDI   R23, 50
-l8: DEC   R23
-    BRNE  l8
-    DEC   R22
-    BRNE  l7
-    DEC   R21
-    BRNE  l6
+.EQU value = 63583         ;value to give 0.125 sec delay
+    LDI   R20, high(value)
+    STS   TCNT1H, R20
+    LDI   R20, low(value)
+    STS   TCNT1L, R20     ;initialize counter TCNT1 = value
+    ;-------------------------------------------------------
+    LDI   R20, 0b00000000
+    STS   TCCR1A, R20
+    LDI   R20, 0b00000101
+    STS   TCCR1B, R20     ;normal mode, prescaler = 1024
+    ;-------------------------------------------------------
+loop_until_Tov1_set: IN    R20, TIFR1      ;get TIFR1 byte & check
+    SBRS  R20, TOV1       ;if TOV1=1, skip next instruction
+    RJMP  loop_until_Tov1_set              ;else, loop back & check TOV1 flag
+    ;-------------------------------------------------------
+    LDI   R20, 1<<TOV1
+    OUT   TIFR1, R20      ;clear TOV1 flag
+    ;-------------------------------------------------------
+    LDI   R20, 0b00000000
+    STS   TCCR1B, R20     ;stop timer0
     RET
